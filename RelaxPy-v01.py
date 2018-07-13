@@ -82,10 +82,10 @@ def sim(Temp, wiN, kiN, eta_inf, m, Tg, A, B, C, p, dt): ### Actual Calculation
 		taoK[i] = log10_tao_K(visc[i],log10Ks)     ### TaoK
 		R = log10_tao_K(visc[i],log10Ks)
 		for j in range(N):
+			#Tfi[j,i] = Temp[i] - ((Temp[i-1]-Tfi[j,i-1])*np.exp(kiN[j]*dt/10**taoK[i])) ### A.2
 			Tfi[j,i] = Temp[i] - ((Temp[i]-Tfi[j,i-1])*np.exp(kiN[j]*dt/10**taoK[i])) ### A.2
-			# Tfi[j,i] = Temp[i] + 1 - ((Temp[i]-Tfi[j,i-1])*np.exp(dt*kiN[j]/(10**taoK[i]))) ### A.2
-			# Tfi[j,i] = Temp[i] - ((Temp[i]-Temp[i-1])*10**taoK[i])/(kiN[j]*dt)
-	        ###  Just trying to get around the expression always be 0
+		        ###  Just trying to get around the expression always be 0
+
 	return visc,taoK,STf,Tfi
 
 if (len(sys.argv)!=3 and len(sys.argv)!=2 and len(sys.argv) != 4):
@@ -149,7 +149,7 @@ for line in f:
 					eta_inf = float(J[x])
 				elif (J[x]=="Tg:"):
 					x=x+1
-					Tg = float(J[x])
+					Tg = float(J[x])+273
 				elif (J[x] == "m:"):
 					x=x+1
 					m = float(J[x])
@@ -182,7 +182,7 @@ for line in f:
 				J = line.rstrip().split(",")
 			Temp = np.append(Temp,np.linspace(float(J[0])+273,float(J[1])+273,int(J[2])),axis=0)
 		i=i+1 # SETTING UP Simulation
-		
+
 wiidx = np.where(Ns==N)
 if Beta=='3/7':
 	wiN = wi_3over7[wiidx]
